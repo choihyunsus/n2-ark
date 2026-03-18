@@ -1,5 +1,9 @@
 KR [한국어](README.ko.md)
 
+<p align="center">
+  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
+</p>
+
 # 🛡️ n2-ark
 
 **AI Firewall — If the AI can't solve the logic, it can't do anything.**
