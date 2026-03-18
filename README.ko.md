@@ -67,52 +67,12 @@ n2-ark는 **규칙 엔진**을 제공합니다. 하지만 규칙만으로는 스
 
 | 레벨 | 방식 | 강제력 | 대상 |
 |------|------|--------|------|
-| ⭐⭐⭐ **L1: n2-soul** | 부팅 시 규칙 자동 로드, 런타임이 모든 도구 호출을 가로챔 | **물리적 강제** — AI가 절대 우회 불가 | n2-soul 사용자 |
-| ⭐⭐ **L2: 라이브러리** | 에이전트 코드에서 `ark.check()`를 매 도구 실행 전 호출 | **코드 레벨 강제** — 개발자가 관문을 제어 | OpenClaw, 커스텀 에이전트 |
-| ⭐ **L3: MCP 서버** | MCP 서버로 연결, AI가 도구 설명을 읽음 | **프롬프트 레벨** — AI에게 지시하지만 물리적 강제는 아님 | Claude Desktop, Cursor, Windsurf |
+| ⭐⭐ **라이브러리** | 에이전트 코드에서 `ark.check()`를 매 도구 실행 전 호출 | **코드 레벨 강제** — 개발자가 관문을 제어 | 커스텀 에이전트, MCP 서버 |
+| ⭐ **MCP 서버** | MCP 서버로 연결, AI가 도구 설명을 읽음 | **프롬프트 레벨** — AI에게 지시하지만 물리적 강제는 아님 | Claude Desktop, Cursor, Windsurf |
 
-> ⚠️ **MCP 서버만으로는 규칙이 물리적으로 강제되지 않습니다.** AI는 `ark_check` 도구를 받고 매 행동 전에 호출하라는 지시를 받지만, 폭주하는 AI는 그냥 건너뛸 수 있습니다. 진짜 물리적 강제를 원한다면 **n2-soul**과 함께 사용하거나 **라이브러리로 통합**하세요.
+> ⚠️ **MCP 서버만으로는 규칙이 물리적으로 강제되지 않습니다.** AI는 `ark_check` 도구를 받고 매 행동 전에 호출하라는 지시를 받지만, 폭주하는 AI는 그냥 건너뛸 수 있습니다. 진짜 강제를 원한다면 에이전트 코드에 **라이브러리로 통합**하세요.
 
-### n2-soul과 함께 사용 (권장 — 진짜 방화벽)
-
-n2-soul 프로젝트에 n2-ark를 의존성으로 추가하세요:
-
-```bash
-cd your-soul-project
-npm install n2-ark
-```
-
-n2-soul의 `index.js`에 n2-ark를 통합하세요:
-
-```javascript
-const { createArk } = require('n2-ark');
-
-// ark 인스턴스 생성 — ./rules/에서 규칙 로드
-const ark = createArk({ rulesDir: './rules' });
-
-// 모든 도구 실행을 ark.check()로 감싸기
-function guardedToolCall(originalHandler) {
-    return (args) => {
-        const check = ark.check(args.name || '', JSON.stringify(args));
-        if (!check.allowed) {
-            return { content: [{ type: 'text', text: `🛡️ 차단: ${check.reason}` }] };
-        }
-        return originalHandler(args);
-    };
-}
-```
-
-기본 규칙을 프로젝트에 복사하세요:
-
-```bash
-cp node_modules/n2-ark/rules/default.n2 ./rules/
-```
-
-이제 **모든 도구 호출이 실행 전에 n2-ark를 통과**합니다. AI에게 선택권이 없습니다 — n2-ark가 차단하면 도구는 실행되지 않습니다.
-
-> **Soul은 기억합니다. Ark는 보호합니다. 함께하면 뚫을 수 없습니다.**
-
-### 라이브러리로 사용 (커스텀 에이전트용)
+### 라이브러리로 사용 (진짜 강제)
 
 직접 AI 에이전트를 개발하는 경우, 도구 실행을 n2-ark로 감싸세요:
 

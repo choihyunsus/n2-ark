@@ -67,52 +67,12 @@ n2-ark provides the **rules engine**. But rules alone don't enforce themselves.
 
 | Level | Method | Enforcement | Who |
 |-------|--------|-------------|-----|
-| ⭐⭐⭐ **L1: n2-soul** | Boot sequence auto-loads rules, runtime intercepts ALL tool calls | **Physical enforcement** — AI literally cannot bypass | n2-soul users |
-| ⭐⭐ **L2: Library** | Import n2-ark in your agent code, call `ark.check()` before every tool execution | **Code-level enforcement** — developer controls the chokepoint | OpenClaw, custom agents |
-| ⭐ **L3: MCP Server** | Connect as MCP server, AI reads tool descriptions | **Prompt-level** — AI is instructed to check, but not physically forced | Claude Desktop, Cursor, Windsurf |
+| ⭐⭐ **Library** | Import n2-ark in your agent code, call `ark.check()` before every tool execution | **Code-level enforcement** — developer controls the chokepoint | Custom agents, MCP servers |
+| ⭐ **MCP Server** | Connect as MCP server, AI reads tool descriptions | **Prompt-level** — AI is instructed to check, but not physically forced | Claude Desktop, Cursor, Windsurf |
 
-> ⚠️ **MCP server alone does NOT physically enforce rules.** The AI receives `ark_check` as a tool and is strongly instructed to call it before every action — but a rogue AI could simply skip it. For true, physical enforcement, use **n2-soul** or integrate as a **library**.
+> ⚠️ **MCP server alone does NOT physically enforce rules.** The AI receives `ark_check` as a tool and is strongly instructed to call it before every action — but a rogue AI could simply skip it. For true enforcement, integrate n2-ark as a **library** in your agent code.
 
-### With n2-soul (Recommended — True Firewall)
-
-Add n2-ark as a dependency in your n2-soul project:
-
-```bash
-cd your-soul-project
-npm install n2-ark
-```
-
-Then integrate n2-ark into your soul's `index.js`:
-
-```javascript
-const { createArk } = require('n2-ark');
-
-// Create ark instance — loads rules from ./rules/
-const ark = createArk({ rulesDir: './rules' });
-
-// Wrap every tool execution with ark.check()
-function guardedToolCall(originalHandler) {
-    return (args) => {
-        const check = ark.check(args.name || '', JSON.stringify(args));
-        if (!check.allowed) {
-            return { content: [{ type: 'text', text: `🛡️ BLOCKED: ${check.reason}` }] };
-        }
-        return originalHandler(args);
-    };
-}
-```
-
-Copy the default rules into your project:
-
-```bash
-cp node_modules/n2-ark/rules/default.n2 ./rules/
-```
-
-Now **every tool call goes through n2-ark before execution**. The AI has no choice — if n2-ark blocks it, the tool simply does not run.
-
-> **Soul remembers. Ark protects. Together, they're unbreakable.**
-
-### As a Library (For Custom Agents)
+### As a Library (True Enforcement)
 
 If you're building your own AI agent, wrap your tool execution with n2-ark:
 
