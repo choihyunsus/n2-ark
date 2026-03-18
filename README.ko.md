@@ -1,5 +1,9 @@
 EN [English](README.md)
 
+<p align="center">
+  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
+</p>
+
 # 🛡️ n2-ark
 
 **AI Firewall — AI가 논리를 풀 수 없으면, 아무것도 할 수 없다.**
