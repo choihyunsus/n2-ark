@@ -58,21 +58,71 @@ AI 에이전트 (어떤 모델이든)
 
 ---
 
-## 호환성
+## 통합 & 강제 적용
 
-n2-ark는 **n2-soul**과 함께 사용하면 가장 강력하지만, **독립적으로 모든 AI 시스템에서 사용 가능**합니다:
+### 🔒 강제 적용 레벨 — 이것은 중요합니다
 
-| AI 시스템 | 연동 방식 | 상태 |
-|-----------|----------|------|
-| **n2-soul** (MCP) | 기본 통합 | ✅ 최적 |
-| **Claude Desktop** | MCP 서버 | ✅ 지원 |
-| **Cursor** | MCP 서버 | ✅ 지원 |
-| **Windsurf** | MCP 서버 | ✅ 지원 |
-| **VS Code + Copilot** | MCP 서버 | ✅ 지원 |
-| **OpenClaw** | MCP 서버 / 라이브러리 | ✅ 지원 |
-| **커스텀 에이전트** | Node.js 라이브러리 | ✅ 지원 |
+n2-ark는 **규칙 엔진**을 제공합니다. 하지만 규칙만으로는 스스로 강제되지 않습니다.
+**n2-ark를 어떻게 통합하느냐에 따라 진짜 방화벽이 될 수도, 그냥 제안에 그칠 수도 있습니다.**
 
-> **설치 한 줄이면 어떤 AI든 보호됩니다.**
+| 레벨 | 방식 | 강제력 | 대상 |
+|------|------|--------|------|
+| ⭐⭐⭐ **L1: n2-soul** | 부팅 시 규칙 자동 로드, 런타임이 모든 도구 호출을 가로챔 | **물리적 강제** — AI가 절대 우회 불가 | n2-soul 사용자 |
+| ⭐⭐ **L2: 라이브러리** | 에이전트 코드에서 `ark.check()`를 매 도구 실행 전 호출 | **코드 레벨 강제** — 개발자가 관문을 제어 | OpenClaw, 커스텀 에이전트 |
+| ⭐ **L3: MCP 서버** | MCP 서버로 연결, AI가 도구 설명을 읽음 | **프롬프트 레벨** — AI에게 지시하지만 물리적 강제는 아님 | Claude Desktop, Cursor, Windsurf |
+
+> ⚠️ **MCP 서버만으로는 규칙이 물리적으로 강제되지 않습니다.** AI는 `ark_check` 도구를 받고 매 행동 전에 호출하라는 지시를 받지만, 폭주하는 AI는 그냥 건너뛸 수 있습니다. 진짜 물리적 강제를 원한다면 **n2-soul**과 함께 사용하거나 **라이브러리로 통합**하세요.
+
+### n2-soul과 함께 사용 (권장 — 진짜 방화벽)
+
+```json
+{
+  "mcpServers": {
+    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
+    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
+  }
+}
+```
+
+n2-soul의 부팅 시퀀스가 n2-ark 규칙을 자동으로 로드하고, 런타임이 모든 도구 호출을 가로챕니다. **AI에게 선택권이 없습니다.** 이것이 권장 설정입니다.
+
+> **Soul은 기억합니다. Ark는 보호합니다. 함께하면 뚫을 수 없습니다.**
+
+### 라이브러리로 사용 (커스텀 에이전트용)
+
+직접 AI 에이전트를 개발하는 경우, 도구 실행을 n2-ark로 감싸세요:
+
+```javascript
+const { createArk } = require('n2-ark');
+const ark = createArk({ rulesDir: './rules' });
+
+// 에이전트의 도구 실행 루프에서:
+async function executeTool(name, args) {
+    const check = ark.check(name, JSON.stringify(args));
+    if (!check.allowed) {
+        throw new Error(`🛡️ BLOCKED: ${check.reason}`);
+        // 도구가 물리적으로 실행될 수 없습니다. 진짜 강제.
+    }
+    return await actualToolExecution(name, args);
+}
+```
+
+### MCP 서버로 사용 (프롬프트 레벨)
+
+Claude Desktop, Cursor, Windsurf 등 MCP 호스트에서:
+
+```json
+{
+  "mcpServers": {
+    "n2-ark": {
+      "command": "npx",
+      "args": ["-y", "n2-ark"]
+    }
+  }
+}
+```
+
+AI는 매 행동 전에 `ark_check`를 호출하라는 지시를 받습니다. 협조적인 AI에게는 강력한 안전 장치를 제공하지만, 폭주하는 AI가 체크를 건너뛰는 것을 물리적으로 막을 수는 없습니다.
 
 ---
 
@@ -252,40 +302,11 @@ const stats = ark.stats(7);
 
 ---
 
-## MCP 서버 (Plug & Play)
-
-### Claude Desktop / Cursor / Windsurf / VS Code
-```json
-{
-  "mcpServers": {
-    "n2-ark": {
-      "command": "npx",
-      "args": ["-y", "n2-ark"],
-      "env": {
-        "N2_ARK_RULES": "/path/to/your/rules"
-      }
-    }
-  }
-}
-```
-
-### n2-soul과 함께 사용 (최강 조합)
-```json
-{
-  "mcpServers": {
-    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
-    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
-  }
-}
-```
-
-> **Soul은 기억합니다. Ark는 보호합니다. N2가 제어합니다.**
-
-### MCP 도구
+## MCP 도구
 
 | 도구 | 설명 |
 |------|------|
-| `ark_check` | 행동 허용 여부 확인. 모든 행동 전에 호출. |
+| `ark_check` | **필수.** 행동 허용 여부 확인. 모든 행동 전에 호출. |
 | `ark_approve` | 차단된 행동에 인간 승인 부여 |
 | `ark_status` | 로드된 규칙 및 상태 머신 현황 |
 | `ark_load_rules` | 런타임 중 추가 규칙 로드 |

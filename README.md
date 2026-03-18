@@ -58,21 +58,71 @@ AI Agent (any model, any platform)
 
 ---
 
-## Compatibility
+## Integration & Enforcement
 
-n2-ark works best with **n2-soul**, but is published as a **standalone package** that works with any AI system:
+### 🔒 Enforcement Levels — This Is Important
 
-| AI System | Integration | Status |
-|-----------|------------|--------|
-| **n2-soul** (MCP) | Native integration | ✅ Optimal |
-| **Claude Desktop** | MCP Server | ✅ Supported |
-| **Cursor** | MCP Server | ✅ Supported |
-| **Windsurf** | MCP Server | ✅ Supported |
-| **VS Code + Copilot** | MCP Server | ✅ Supported |
-| **OpenClaw** | MCP Server / Library | ✅ Supported |
-| **Custom Agents** | Node.js Library | ✅ Supported |
+n2-ark provides the **rules engine**. But rules alone don't enforce themselves.
+**How you integrate n2-ark determines whether it's a real firewall or just a suggestion.**
 
-> **One install protects any AI.**
+| Level | Method | Enforcement | Who |
+|-------|--------|-------------|-----|
+| ⭐⭐⭐ **L1: n2-soul** | Boot sequence auto-loads rules, runtime intercepts ALL tool calls | **Physical enforcement** — AI literally cannot bypass | n2-soul users |
+| ⭐⭐ **L2: Library** | Import n2-ark in your agent code, call `ark.check()` before every tool execution | **Code-level enforcement** — developer controls the chokepoint | OpenClaw, custom agents |
+| ⭐ **L3: MCP Server** | Connect as MCP server, AI reads tool descriptions | **Prompt-level** — AI is instructed to check, but not physically forced | Claude Desktop, Cursor, Windsurf |
+
+> ⚠️ **MCP server alone does NOT physically enforce rules.** The AI receives `ark_check` as a tool and is strongly instructed to call it before every action — but a rogue AI could simply skip it. For true, physical enforcement, use **n2-soul** or integrate as a **library**.
+
+### With n2-soul (Recommended — True Firewall)
+
+```json
+{
+  "mcpServers": {
+    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
+    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
+  }
+}
+```
+
+n2-soul's boot sequence automatically loads n2-ark rules and its runtime intercepts every tool call. **The AI has no choice.** This is the recommended setup.
+
+> **Soul remembers. Ark protects. Together, they're unbreakable.**
+
+### As a Library (For Custom Agents)
+
+If you're building your own AI agent, wrap your tool execution with n2-ark:
+
+```javascript
+const { createArk } = require('n2-ark');
+const ark = createArk({ rulesDir: './rules' });
+
+// In your agent's tool execution loop:
+async function executeTool(name, args) {
+    const check = ark.check(name, JSON.stringify(args));
+    if (!check.allowed) {
+        throw new Error(`🛡️ BLOCKED: ${check.reason}`);
+        // The tool literally cannot execute. True enforcement.
+    }
+    return await actualToolExecution(name, args);
+}
+```
+
+### As MCP Server (Prompt-Level)
+
+For Claude Desktop, Cursor, Windsurf, and other MCP hosts:
+
+```json
+{
+  "mcpServers": {
+    "n2-ark": {
+      "command": "npx",
+      "args": ["-y", "n2-ark"]
+    }
+  }
+}
+```
+
+The AI will be instructed to call `ark_check` before every action. This provides a strong safety layer for cooperative AI, but cannot physically prevent a determined rogue agent from skipping the check.
 
 ---
 
@@ -205,40 +255,11 @@ data/audit/
 
 ---
 
-## MCP Server (Plug & Play)
-
-### Claude Desktop / Cursor / Windsurf / VS Code
-```json
-{
-  "mcpServers": {
-    "n2-ark": {
-      "command": "npx",
-      "args": ["-y", "n2-ark"],
-      "env": {
-        "N2_ARK_RULES": "/path/to/your/rules"
-      }
-    }
-  }
-}
-```
-
-### With n2-soul (The Ultimate Combo)
-```json
-{
-  "mcpServers": {
-    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
-    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
-  }
-}
-```
-
-> **Soul remembers. Ark protects. N2 controls.**
-
-### MCP Tools
+## MCP Tools
 
 | Tool | Description |
 |------|-------------|
-| `ark_check` | Check if an action is allowed. Call before ANY action. |
+| `ark_check` | **MANDATORY.** Check if an action is allowed. Call before ANY action. |
 | `ark_approve` | Grant human approval for a blocked action. |
 | `ark_status` | View loaded rules and state machine states. |
 | `ark_load_rules` | Load additional rules at runtime. |
