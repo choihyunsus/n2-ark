@@ -1,9 +1,5 @@
 EN [English](README.md)
 
-<p align="center">
-  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
-</p>
-
 # 🛡️ n2-ark
 
 **AI Firewall — AI가 논리를 풀 수 없으면, 아무것도 할 수 없다.**
@@ -12,6 +8,10 @@ EN [English](README.md)
 [![license Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-orange)](package.json)
+
+<p align="center">
+  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
+</p>
 
 > *폭주하는 AI는 규칙을 따르지 않습니다 — 그래서 n2-ark는 규칙을 건너뛰는 것 자체를 불가능하게 만들었습니다.*
 
@@ -23,8 +23,6 @@ EN [English](README.md)
 >
 > AI와 인간이 공존할 수 있도록, AI의 위험을 차단할 수 있는 마지막 방패 같은 역할을 생각하며 개발하였습니다.
 > 이로 인해 AI와 인간이 안전하게 공존할 수 있는 세상이 열리길 바랍니다.
->
-> — Hyunsu Choi
 
 ---
 

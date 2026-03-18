@@ -1,9 +1,5 @@
 KR [한국어](README.ko.md)
 
-<p align="center">
-  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
-</p>
-
 # 🛡️ n2-ark
 
 **AI Firewall — If the AI can't solve the logic, it can't do anything.**
@@ -12,6 +8,10 @@ KR [한국어](README.ko.md)
 [![license Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-orange)](package.json)
+
+<p align="center">
+  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
+</p>
 
 > *A rogue AI won't follow the rules — so n2-ark makes it impossible to skip them.*
 
@@ -23,8 +23,6 @@ KR [한국어](README.ko.md)
 >
 > I built this thinking of a final shield — one that blocks the dangers of AI so humans and AI can coexist safely.
 > I hope this opens the door to a world where AI and humans can live together in safety.
->
-> — Hyunsu Choi
 
 ---
 
