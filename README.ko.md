@@ -75,16 +75,40 @@ n2-ark는 **규칙 엔진**을 제공합니다. 하지만 규칙만으로는 스
 
 ### n2-soul과 함께 사용 (권장 — 진짜 방화벽)
 
-```json
-{
-  "mcpServers": {
-    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
-    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
-  }
+n2-soul 프로젝트에 n2-ark를 의존성으로 추가하세요:
+
+```bash
+cd your-soul-project
+npm install n2-ark
+```
+
+n2-soul의 `index.js`에 n2-ark를 통합하세요:
+
+```javascript
+const { createArk } = require('n2-ark');
+
+// ark 인스턴스 생성 — ./rules/에서 규칙 로드
+const ark = createArk({ rulesDir: './rules' });
+
+// 모든 도구 실행을 ark.check()로 감싸기
+function guardedToolCall(originalHandler) {
+    return (args) => {
+        const check = ark.check(args.name || '', JSON.stringify(args));
+        if (!check.allowed) {
+            return { content: [{ type: 'text', text: `🛡️ 차단: ${check.reason}` }] };
+        }
+        return originalHandler(args);
+    };
 }
 ```
 
-n2-soul의 부팅 시퀀스가 n2-ark 규칙을 자동으로 로드하고, 런타임이 모든 도구 호출을 가로챕니다. **AI에게 선택권이 없습니다.** 이것이 권장 설정입니다.
+기본 규칙을 프로젝트에 복사하세요:
+
+```bash
+cp node_modules/n2-ark/rules/default.n2 ./rules/
+```
+
+이제 **모든 도구 호출이 실행 전에 n2-ark를 통과**합니다. AI에게 선택권이 없습니다 — n2-ark가 차단하면 도구는 실행되지 않습니다.
 
 > **Soul은 기억합니다. Ark는 보호합니다. 함께하면 뚫을 수 없습니다.**
 

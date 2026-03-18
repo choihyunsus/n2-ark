@@ -75,16 +75,40 @@ n2-ark provides the **rules engine**. But rules alone don't enforce themselves.
 
 ### With n2-soul (Recommended — True Firewall)
 
-```json
-{
-  "mcpServers": {
-    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
-    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
-  }
+Add n2-ark as a dependency in your n2-soul project:
+
+```bash
+cd your-soul-project
+npm install n2-ark
+```
+
+Then integrate n2-ark into your soul's `index.js`:
+
+```javascript
+const { createArk } = require('n2-ark');
+
+// Create ark instance — loads rules from ./rules/
+const ark = createArk({ rulesDir: './rules' });
+
+// Wrap every tool execution with ark.check()
+function guardedToolCall(originalHandler) {
+    return (args) => {
+        const check = ark.check(args.name || '', JSON.stringify(args));
+        if (!check.allowed) {
+            return { content: [{ type: 'text', text: `🛡️ BLOCKED: ${check.reason}` }] };
+        }
+        return originalHandler(args);
+    };
 }
 ```
 
-n2-soul's boot sequence automatically loads n2-ark rules and its runtime intercepts every tool call. **The AI has no choice.** This is the recommended setup.
+Copy the default rules into your project:
+
+```bash
+cp node_modules/n2-ark/rules/default.n2 ./rules/
+```
+
+Now **every tool call goes through n2-ark before execution**. The AI has no choice — if n2-ark blocks it, the tool simply does not run.
 
 > **Soul remembers. Ark protects. Together, they're unbreakable.**
 
