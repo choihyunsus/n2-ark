@@ -11,6 +11,10 @@ KR [한국어](README.ko.md)
 
 > *A rogue AI won't follow the rules — so n2-ark makes it impossible to skip them.*
 
+<p align="center">
+  <img src="docs/webtoon.png" alt="n2-ark 4-panel comic" width="600" />
+</p>
+
 ---
 
 ## The Problem
