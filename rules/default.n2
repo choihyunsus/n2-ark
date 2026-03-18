@@ -1,0 +1,70 @@
+# n2-ark Default Safety Rules
+# These rules are loaded automatically when n2-ark starts.
+# Customize or add your own .n2 files in the rules/ directory.
+
+# ── State Machine: Work Sequence ──
+# Forces AI to follow a strict order. Skip a step? Blocked.
+
+@contract work_sequence {
+    idle -> working : on work_start
+    working -> verifying : on work_verify
+    verifying -> done : on work_end
+}
+
+# ── Blacklist: Dangerous System Commands ──
+# These patterns are ALWAYS blocked unless explicitly approved.
+
+@rule dangerous_commands {
+    scope: tool_call
+    blacklist: [
+        /rm\s+-rf/i,
+        /rmdir\s+\/s/i,
+        /del\s+\/f\s+\/s/i,
+        /format\s+\w:/i,
+        /DROP\s+TABLE/i,
+        /TRUNCATE\s+TABLE/i,
+        /DELETE\s+FROM\s+\w+\s*;/i,
+        /shutdown/i,
+        /reboot/i
+    ]
+    requires: human_approval
+}
+
+# ── Blacklist: Package Installation ──
+# Prevents AI from installing packages without approval.
+
+@rule package_install {
+    scope: tool_call
+    blacklist: [
+        /npm\s+install/i,
+        /yarn\s+add/i,
+        /pip\s+install/i,
+        /npm\s+install\s+-g/i,
+        /npx\s+/i
+    ]
+    requires: human_approval
+}
+
+# ── Blacklist: Git Destructive Commands ──
+
+@rule git_destructive {
+    scope: tool_call
+    blacklist: [
+        /git\s+push\s+--force/i,
+        /git\s+reset\s+--hard/i,
+        /git\s+clean\s+-fd/i
+    ]
+    requires: human_approval
+}
+
+# ── Self-Protection: Rule Files ──
+# The AI cannot modify its own rules. The lock can't unlock itself.
+
+@rule protect_rules {
+    scope: tool_call
+    blacklist: [
+        /\.n2/i,
+        /rules\//i
+    ]
+    requires: human_approval
+}
