@@ -223,14 +223,55 @@ Create custom `.n2` files for your specific use case.
 
 ---
 
+## MCP Server (Plug & Play)
+
+n2-ark runs as an MCP server — just add it to your config and **every AI action is automatically protected**.
+
+### Claude Desktop / Cursor / Any MCP Client
+```json
+{
+  "mcpServers": {
+    "n2-ark": {
+      "command": "npx",
+      "args": ["-y", "n2-ark"],
+      "env": {
+        "N2_ARK_RULES": "/path/to/your/rules"
+      }
+    }
+  }
+}
+```
+
+### MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `ark_check` | Check if an action is allowed. Call before ANY action. |
+| `ark_approve` | Grant human approval for a blocked action. |
+| `ark_status` | View loaded rules and current state machine states. |
+| `ark_load_rules` | Load additional .n2 rules at runtime. |
+| `ark_stats` | Audit stats: blocked vs passed over N days. |
+| `ark_reset` | Reset state machines for a new session. |
+
+---
+
 ## Integration with Soul (MCP)
 
 n2-ark works standalone, but pairs perfectly with [n2-soul](https://github.com/choihyunsus/soul):
 
 > **Soul remembers. Ark protects. N2 controls.**
 
+```json
+{
+  "mcpServers": {
+    "n2-soul": { "command": "npx", "args": ["-y", "n2-soul"] },
+    "n2-ark": { "command": "npx", "args": ["-y", "n2-ark"] }
+  }
+}
+```
+
+Or use as a library:
 ```javascript
-// In your MCP server or agent framework
 const { createArk } = require('n2-ark');
 const ark = createArk({ rulesDir: './rules' });
 

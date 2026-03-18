@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "AI Firewall — Rust-inspired rule engine that makes it physically impossible for AI to break the rules. If the AI can't solve the logic, it can't do anything.",
   "main": "index.js",
+  "bin": {
+    "n2-ark": "server.js"
+  },
   "keywords": [
     "ai-safety",
     "ai-firewall",
@@ -30,6 +33,7 @@
   },
   "files": [
     "index.js",
+    "server.js",
     "lib/",
     "rules/",
     "README.md",
