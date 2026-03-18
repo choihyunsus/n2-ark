@@ -76,6 +76,16 @@ function createArk(options = {}) {
          */
         loadString(source) {
             const parsed = parse(source);
+
+            // Self-protection: reject rules that overwrite protect_layer rules
+            const protectedNames = Object.keys(gate.blacklists).filter(n => n.startsWith('protect_'));
+            for (const name of Object.keys(parsed.blacklists)) {
+                if (protectedNames.includes(name)) {
+                    console.error(`[n2-ark] BLOCKED: Cannot overwrite self-protection rule '${name}'`);
+                    delete parsed.blacklists[name];
+                }
+            }
+
             Object.assign(gate.contracts, parsed.contracts);
             Object.assign(gate.blacklists, parsed.blacklists);
             Object.assign(gate.gates, parsed.gates);

@@ -7,7 +7,7 @@
 
 @contract payment_sequence {
     idle -> reviewing : on payment_request
-    reviewing -> approved : on human_approval
+    reviewing -> approved : on payment_approval
     approved -> executing : on execute_payment
     executing -> idle : on payment_complete
 }

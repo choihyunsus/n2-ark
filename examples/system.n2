@@ -7,7 +7,7 @@
     idle -> building : on build_start
     building -> testing : on run_tests
     testing -> staging : on deploy_staging
-    staging -> approved : on human_approval
+    staging -> approved : on deploy_approval
     approved -> production : on deploy_production
 }
 
