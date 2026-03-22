@@ -325,7 +325,7 @@ Apache-2.0 — Free to use, modify, and distribute.
 
 ## ⭐ Star History
 
-If you find Ark helpful, please consider giving us a star! ⭐
+No coffee? A star is fine too ☕→⭐
 
 ---
 
