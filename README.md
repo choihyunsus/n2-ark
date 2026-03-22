@@ -327,8 +327,6 @@ Apache-2.0 — Free to use, modify, and distribute.
 
 If you find Ark helpful, please consider giving us a star! ⭐
 
-[![Star History Chart](https://api.star-history.com/svg?repos=choihyunsus/n2-ark&type=Date)](https://star-history.com/#choihyunsus/n2-ark&Date)
-
 ---
 
 > *"The Last Shield — Normal work is free. Only the truly dangerous is blocked."*
