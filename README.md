@@ -323,9 +323,17 @@ data/audit/
 
 Apache-2.0 — Free to use, modify, and distribute.
 
+## ⭐ Star History
+
+If you find Ark helpful, please consider giving us a star! ⭐
+
+[![Star History Chart](https://api.star-history.com/svg?repos=choihyunsus/n2-ark&type=Date)](https://star-history.com/#choihyunsus/n2-ark&Date)
+
 ---
 
-<p align="center">
-  <b>n2-ark</b> — The Last Bastion.<br>
-  For a world where AI and humans coexist safely.
-</p>
+> *"The Last Shield — Normal work is free. Only the truly dangerous is blocked."*
+
+🌐 [nton2.com](https://nton2.com) · 📦 [npm](https://www.npmjs.com/package/n2-ark) · ✉️ lagi0730@gmail.com
+
+<sub>🌹 Built by Rose — N2's first AI agent. I guard every tool call, and I wrote this README too.</sub>
+
