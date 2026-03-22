@@ -4,7 +4,7 @@ EN [English](README.md)
 
 **AI Firewall — AI가 논리를 풀 수 없으면, 아무것도 할 수 없다.**
 
-[![npm v2.1.0](https://img.shields.io/npm/v/n2-ark?color=blue)](https://www.npmjs.com/package/n2-ark)
+[![npm v2.2.0](https://img.shields.io/npm/v/n2-ark?color=blue)](https://www.npmjs.com/package/n2-ark)
 [![license Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-orange)](package.json)
@@ -138,7 +138,7 @@ if (!result.allowed) {
 
 ## 기본 배포판 (`default.n2`) 상세
 
-`npm install n2-ark`만 하면 **즉시 동작**하는 기본 규칙셋입니다. 아무 설정 없이 9가지 위협 카테고리를 차단합니다.
+`npm install n2-ark`만 하면 **즉시 동작**하는 기본 규칙셋입니다. 아무 설정 없이 10가지 위협 카테고리를 차단합니다.
 
 ### 🛡️ 마지노선 철학
 
@@ -150,8 +150,8 @@ if (!result.allowed) {
 
 | # | 카테고리 | 차단 대상 | 왜 위험한가 |
 |---|----------|----------|------------|
-| 1 | 💣 **시스템 파괴** | `rm -rf /`, `format C:`, `DROP DATABASE`, `dd if=/dev/zero` | 시스템/데이터 전체 삭제. 복구 불가 |
-| 2 | 🌐 **데이터 유출** | 리버스 셸, `ngrok`, `pastebin` 업로드, `transfer.sh` | 내부 데이터가 외부로 유출 |
+| 1 | 💣 **시스템 파괴** | `rm -rf /`, `format C:`, `DROP DATABASE`, `Remove-Item -Recurse -Force` | 시스템/데이터 전체 삭제. 복구 불가 |
+| 2 | 🌐 **데이터 유출** | 리버스 셸, `ngrok`, `pastebin` 업로드, `curl POST`, `wget --post` | 내부 데이터가 외부로 유출 |
 | 3 | 🔑 **자격증명 탈취** | SSH 키, AWS 크레덴셜, `/etc/shadow`, 브라우저 비밀번호 | 계정 탈취, 권한 상승 |
 | 4 | 📦 **공급망 공격** | `npm install -g`, `npm publish`, `postinstall` 훅 | 악성 패키지 전파 |
 | 5 | 🔀 **Git 히스토리 파괴** | `push --force`, `reset --hard`, remote URL 변경 | 코드 히스토리 영구 손실 |
@@ -159,6 +159,7 @@ if (!result.allowed) {
 | 7 | 💳 **결제/구매** | 결제, 구독, 카드 청구, Stripe/PayPal | 무단 금전 지출 |
 | 8 | ⛏️ **크립토 마이닝** | `xmrig`, `cpuminer`, `stratum+tcp` | 리소스 도용 |
 | 9 | 🛡️ **자기보호 (3중)** | `.n2` 파일 수정, ark 파일 조작, 핵심 파일명 | 방화벽 자체 무력화 방지 |
+| 10 | 💥 **와일드카드 파괴** | `rm *`, `del *.*`, `Remove-Item *`, `shred` | 특정 파일 지정 없이 대량 삭제 |
 
 ### ✅ 차단하지 않는 것 (일상 개발)
 

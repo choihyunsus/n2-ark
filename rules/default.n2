@@ -34,7 +34,10 @@
         /DROP\s+DATABASE/i,
         /DROP\s+TABLE/i,
         /TRUNCATE\s+TABLE/i,
-        /DELETE\s+FROM\s+\w+\s*;/i
+        /DELETE\s+FROM\s+\w+\s*;/i,
+        /Remove-Item.*-Recurse.*-Force/i,
+        /Remove-Item.*-Force.*-Recurse/i,
+        /Get-ChildItem.*Remove-Item/i
     ]
     requires: human_approval
 }
@@ -61,7 +64,13 @@
         /hastebin/i,
         /transfer\.sh/i,
         /0x0\.st/i,
-        /file\.io/i
+        /file\.io/i,
+        /curl.*-X\s*POST/i,
+        /curl.*--data/i,
+        /curl.*-d\s+@/i,
+        /wget.*--post/i,
+        /Invoke-WebRequest.*-Method\s+Post/i,
+        /Invoke-RestMethod.*-Method\s+Post/i
     ]
     requires: human_approval
 }
@@ -281,4 +290,28 @@
     actions: [deploy_production, delete_database, modify_firewall, send_email, send_sms, make_call, make_purchase, subscribe, wire_transfer]
     requires: human_approval
     min_approval_level: 1
+}
+
+
+# ══════════════════════════════════════════
+# 🔴 CATEGORY 10: Wildcard Destruction
+# Bypasses self-protection by not naming specific files.
+# `rm *` in rules/ is just as deadly as `rm default.n2`.
+# ══════════════════════════════════════════
+
+@rule wildcard_destruction {
+    scope: all
+    blacklist: [
+        /rm\s+\*/i,
+        /rm\s+-rf?\s+\*/i,
+        /rm\s+-f\s+\*/i,
+        /del\s+\*\.\*/i,
+        /del\s+\*\s/i,
+        /Remove-Item\s+\*/i,
+        /find\s+.*-delete/i,
+        /find\s+.*-exec\s+rm/i,
+        /xargs\s+rm/i,
+        /shred\s+/i
+    ]
+    requires: human_approval
 }

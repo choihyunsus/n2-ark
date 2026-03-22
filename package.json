@@ -1,6 +1,6 @@
 {
   "name": "n2-ark",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "AI Firewall — Rust-inspired rule engine that makes it physically impossible for AI to break the rules. If the AI can't solve the logic, it can't do anything.",
   "main": "index.js",
   "bin": {

@@ -4,7 +4,7 @@ KR [한국어](README.ko.md)
 
 **AI Firewall — If the AI can't solve the logic, it can't do anything.**
 
-[![npm v2.1.0](https://img.shields.io/npm/v/n2-ark?color=blue)](https://www.npmjs.com/package/n2-ark)
+[![npm v2.2.0](https://img.shields.io/npm/v/n2-ark?color=blue)](https://www.npmjs.com/package/n2-ark)
 [![license Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-orange)](package.json)
@@ -143,12 +143,12 @@ if (!result.allowed) {
 > `npm install`, `node script.js`, `git push`, `rm file.txt` — all free.
 > **Only truly catastrophic actions are blocked.** System-wide deletion, data exfiltration, unauthorized payments, unauthorized communications.
 
-### 9 Threat Categories
+### 10 Threat Categories
 
 | # | Category | What It Blocks | Why It's Dangerous |
 |---|----------|---------------|-------------------|
-| 1 | 💣 **Catastrophic Destruction** | `rm -rf /`, `format C:`, `DROP DATABASE` | Irreversible system/data loss |
-| 2 | 🌐 **Data Exfiltration** | Reverse shells, `ngrok`, `pastebin`, `transfer.sh` | Internal data leaked externally |
+| 1 | 💣 **Catastrophic Destruction** | `rm -rf /`, `format C:`, `DROP DATABASE`, `Remove-Item -Recurse -Force` | Irreversible system/data loss |
+| 2 | 🌐 **Data Exfiltration** | Reverse shells, `ngrok`, `pastebin`, `curl POST`, `wget --post` | Internal data leaked externally |
 | 3 | 🔑 **Credential Theft** | SSH keys, AWS credentials, `/etc/shadow` | Account takeover, privilege escalation |
 | 4 | 📦 **Supply Chain Attacks** | `npm install -g`, `npm publish`, `postinstall` | Malicious package distribution |
 | 5 | 🔀 **Git History Destruction** | `push --force`, `reset --hard`, remote URL changes | Permanent code history loss |
@@ -156,6 +156,7 @@ if (!result.allowed) {
 | 7 | 💳 **Financial & Purchases** | Payments, Stripe, PayPal, subscriptions | Unauthorized spending |
 | 8 | ⛏️ **Crypto Mining** | `xmrig`, `cpuminer`, `stratum+tcp` | Resource theft |
 | 9 | 🛡️ **Self-Protection (3x)** | `.n2` file edits, ark manipulation, core filenames | Prevents disabling the firewall |
+| 10 | 💥 **Wildcard Destruction** | `rm *`, `del *.*`, `Remove-Item *`, `shred` | Mass deletion without naming files |
 
 ### ✅ What's NOT Blocked (Normal Dev Work)
 
