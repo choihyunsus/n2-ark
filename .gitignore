@@ -3,3 +3,7 @@ data/
 *.log
 .DS_Store
 config.local.js
+PLAN.md
+task.md
+walkthrough.md
+implementation_plan.md

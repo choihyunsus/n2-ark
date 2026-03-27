@@ -1,0 +1,14 @@
+# Test files
+test.js
+sim-test.js
+sim-result*.txt
+
+# Data directory (runtime-generated)
+data/
+
+# Docs assets (webtoon only for README display)
+docs/
+
+# Git
+.git/
+.gitignore

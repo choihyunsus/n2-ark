@@ -7,7 +7,7 @@ const { createArk } = require('./index');
 // ── MCP Protocol Constants ──
 const JSONRPC_VERSION = '2.0';
 const SERVER_NAME = 'n2-ark';
-const SERVER_VERSION = '2.1.0';
+const SERVER_VERSION = '2.2.1';
 
 // ── Initialize Ark ──
 const rulesDir = process.env.N2_ARK_RULES || path.join(process.cwd(), 'rules');

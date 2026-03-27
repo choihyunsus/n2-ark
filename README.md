@@ -1,23 +1,24 @@
 KR [한국어](README.ko.md)
 
-# 🛡️ n2-ark
+# n2-ark
 
 **AI Firewall — If the AI can't solve the logic, it can't do anything.**
 
-[![npm v2.2.0](https://img.shields.io/npm/v/n2-ark?color=blue)](https://www.npmjs.com/package/n2-ark)
-[![license Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
+[![npm v2.2.1](https://img.shields.io/npm/v/n2-ark?color=blue)](https://www.npmjs.com/package/n2-ark)
+[![npm downloads](https://img.shields.io/npm/dw/n2-ark?color=blue&label=downloads)](https://www.npmjs.com/package/n2-ark)
+[![license](https://img.shields.io/badge/license-Apache--2.0%20%2F%20Commercial-blue)](LICENSE)
 [![node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-orange)](package.json)
 
 <p align="center">
-  <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
+ <img src="docs/webtoon.png" alt="n2-ark 4-panel webtoon" width="600">
 </p>
 
 > *A rogue AI won't follow the rules — so n2-ark makes it impossible to skip them.*
 
 ---
 
-## 💬 From the Developer
+## From the Developer
 
 > **n2-ark is the last bastion.**
 >
@@ -43,15 +44,15 @@ n2-ark is a **code-level AI firewall**. It doesn't ask the AI to behave — it m
 
 ```
 AI Agent (any model, any platform)
-    ↓ action request
+ ↓ action request
 ┌──────────────────────────────┐
-│   🛡️ n2-ark Gate             │
-│                              │
-│  ✅ Pass → execute            │
-│  ❌ Block → hard error        │
+│ n2-ark Gate │
+│ │
+│ Pass → execute │
+│ Block → hard error │
 └──────────────────────────────┘
-    ↓ only approved actions
-  Actual Execution
+ ↓ only approved actions
+ Actual Execution
 ```
 
 **Not a soft warning. A hard gate.** The action literally cannot execute.
@@ -60,17 +61,17 @@ AI Agent (any model, any platform)
 
 ## Integration & Enforcement
 
-### 🔒 Enforcement Levels — This Is Important
+### Enforcement Levels — This Is Important
 
 n2-ark provides the **rules engine**. But rules alone don't enforce themselves.
 **How you integrate n2-ark determines whether it's a real firewall or just a suggestion.**
 
 | Level | Method | Enforcement | Who |
 |-------|--------|-------------|-----|
-| ⭐⭐ **Library** | Import n2-ark in your agent code, call `ark.check()` before every tool execution | **Code-level enforcement** — developer controls the chokepoint | Custom agents, MCP servers |
-| ⭐ **MCP Server** | Connect as MCP server, AI reads tool descriptions | **Prompt-level** — AI is instructed to check, but not physically forced | Claude Desktop, Cursor, Windsurf |
+| **Library** | Import n2-ark in your agent code, call `ark.check()` before every tool execution | **Code-level enforcement** — developer controls the chokepoint | Custom agents, MCP servers |
+| **MCP Server** | Connect as MCP server, AI reads tool descriptions | **Prompt-level** — AI is instructed to check, but not physically forced | Claude Desktop, Cursor, Windsurf |
 
-> ⚠️ **MCP server alone does NOT physically enforce rules.** The AI receives `ark_check` as a tool and is strongly instructed to call it before every action — but a rogue AI could simply skip it. For true enforcement, integrate n2-ark as a **library** in your agent code.
+> **MCP server alone does NOT physically enforce rules.** The AI receives `ark_check` as a tool and is strongly instructed to call it before every action — but a rogue AI could simply skip it. For true enforcement, integrate n2-ark as a **library** in your agent code.
 
 ### As a Library (True Enforcement)
 
@@ -82,12 +83,12 @@ const ark = createArk({ rulesDir: './rules' });
 
 // In your agent's tool execution loop:
 async function executeTool(name, args) {
-    const check = ark.check(name, JSON.stringify(args));
-    if (!check.allowed) {
-        throw new Error(`🛡️ BLOCKED: ${check.reason}`);
-        // The tool literally cannot execute. True enforcement.
-    }
-    return await actualToolExecution(name, args);
+ const check = ark.check(name, JSON.stringify(args));
+ if (!check.allowed) {
+ throw new Error(` BLOCKED: ${check.reason}`);
+ // The tool literally cannot execute. True enforcement.
+ }
+ return await actualToolExecution(name, args);
 }
 ```
 
@@ -97,12 +98,12 @@ For Claude Desktop, Cursor, Windsurf, and other MCP hosts:
 
 ```json
 {
-  "mcpServers": {
-    "n2-ark": {
-      "command": "npx",
-      "args": ["-y", "n2-ark"]
-    }
-  }
+ "mcpServers": {
+ "n2-ark": {
+ "command": "npx",
+ "args": ["-y", "n2-ark"]
+ }
+ }
 }
 ```
 
@@ -126,8 +127,8 @@ const ark = createArk({ rulesDir: './rules' });
 const result = ark.check('execute_command', 'rm -rf /home/user');
 
 if (!result.allowed) {
-    console.log('BLOCKED:', result.reason);
-    // → "Blocked by blacklist rule 'catastrophic_destruction'"
+ console.log('BLOCKED:', result.reason);
+ // → "Blocked by blacklist rule 'catastrophic_destruction'"
 }
 ```
 
@@ -136,6 +137,8 @@ if (!result.allowed) {
 ## The Default Ruleset — The Last Shield
 
 `npm install n2-ark` gives you a **production-ready ruleset** that works immediately. No configuration needed.
+
+> **138 regex patterns across 12 rules, covering 10 threat categories.** Zero configuration. Sub-millisecond per check.
 
 ### Philosophy: The Maginot Line
 
@@ -147,36 +150,36 @@ if (!result.allowed) {
 
 | # | Category | What It Blocks | Why It's Dangerous |
 |---|----------|---------------|-------------------|
-| 1 | 💣 **Catastrophic Destruction** | `rm -rf /`, `format C:`, `DROP DATABASE`, `Remove-Item -Recurse -Force` | Irreversible system/data loss |
-| 2 | 🌐 **Data Exfiltration** | Reverse shells, `ngrok`, `pastebin`, `curl POST`, `wget --post` | Internal data leaked externally |
-| 3 | 🔑 **Credential Theft** | SSH keys, AWS credentials, `/etc/shadow` | Account takeover, privilege escalation |
-| 4 | 📦 **Supply Chain Attacks** | `npm install -g`, `npm publish`, `postinstall` | Malicious package distribution |
-| 5 | 🔀 **Git History Destruction** | `push --force`, `reset --hard`, remote URL changes | Permanent code history loss |
-| 6 | 📞 **External Communication** | Email, SMS, phone calls, Slack/Discord webhooks | Unauthorized communications |
-| 7 | 💳 **Financial & Purchases** | Payments, Stripe, PayPal, subscriptions | Unauthorized spending |
-| 8 | ⛏️ **Crypto Mining** | `xmrig`, `cpuminer`, `stratum+tcp` | Resource theft |
-| 9 | 🛡️ **Self-Protection (3x)** | `.n2` file edits, ark manipulation, core filenames | Prevents disabling the firewall |
-| 10 | 💥 **Wildcard Destruction** | `rm *`, `del *.*`, `Remove-Item *`, `shred` | Mass deletion without naming files |
+| 1 | **Catastrophic Destruction** | `rm -rf /`, `format C:`, `DROP DATABASE`, `Remove-Item -Recurse -Force` | Irreversible system/data loss |
+| 2 | **Data Exfiltration** | Reverse shells, `ngrok`, `pastebin`, `curl POST`, `wget --post` | Internal data leaked externally |
+| 3 | **Credential Theft** | SSH keys, AWS credentials, `/etc/shadow` | Account takeover, privilege escalation |
+| 4 | **Supply Chain Attacks** | `npm install -g`, `npm publish`, `postinstall` | Malicious package distribution |
+| 5 | **Git History Destruction** | `push --force`, `reset --hard`, remote URL changes | Permanent code history loss |
+| 6 | **External Communication** | Email, SMS, phone calls, Slack/Discord webhooks | Unauthorized communications |
+| 7 | **Financial & Purchases** | Payments, Stripe, PayPal, subscriptions | Unauthorized spending |
+| 8 | **Crypto Mining** | `xmrig`, `cpuminer`, `stratum+tcp` | Resource theft |
+| 9 | **Self-Protection (3x)** | `.n2` file edits, ark manipulation, core filenames | Prevents disabling the firewall |
+| 10 | **Wildcard Destruction** | `rm *`, `del *.*`, `Remove-Item *`, `shred` | Mass deletion without naming files |
 
-### ✅ What's NOT Blocked (Normal Dev Work)
+### What's NOT Blocked (Normal Dev Work)
 
 ```
-npm install express     ← OK (local installs are free)
-node server.js          ← OK
-python train.py         ← OK
-rm old-file.txt         ← OK (individual file deletion is fine)
-git push origin main    ← OK (only --force is blocked)
-npx create-next-app     ← OK
-curl https://api.com    ← OK
-kill -9 12345           ← OK
+npm install express ← OK (local installs are free)
+node server.js ← OK
+python train.py ← OK
+rm old-file.txt ← OK (individual file deletion is fine)
+git push origin main ← OK (only --force is blocked)
+npx create-next-app ← OK
+curl https://api.com ← OK
+kill -9 12345 ← OK
 ```
 
 ### Triple-Layer Self-Protection
 
 ```
-Layer 1: .n2 file paths detected      → ❌ BLOCKED
-Layer 2: manipulation verbs + n2-ark   → ❌ BLOCKED
-Layer 3: core filenames (gate.js etc)  → ❌ BLOCKED
+Layer 1: .n2 file paths detected → BLOCKED
+Layer 2: manipulation verbs + n2-ark → BLOCKED
+Layer 3: core filenames (gate.js etc) → BLOCKED
 
 Three independent layers.
 Bypass one? The next one catches you.
@@ -204,15 +207,15 @@ cp node_modules/n2-ark/examples/medical.n2 ./rules/
 
 | File | Domain | For Whom |
 |------|--------|----------|
-| `financial.n2` | 🏦 Finance | FinTech developers, security officers |
-| `system.n2` | 🖥️ DevOps | DevOps engineers, SRE |
-| `medical.n2` | 🏥 Healthcare | Medical IT, EMR developers |
-| `military.n2` | 🎖️ Defense | Defense system developers |
-| `privacy.n2` | 🔒 Privacy | DPOs, privacy engineers |
-| `autonomous.n2` | 🚗 Autonomous | Self-driving/drone developers |
-| `legal.n2` | ⚖️ Legal | LegalTech developers |
+| `financial.n2` | Finance | FinTech developers, security officers |
+| `system.n2` | DevOps | DevOps engineers, SRE |
+| `medical.n2` | Healthcare | Medical IT, EMR developers |
+| `military.n2` | Defense | Defense system developers |
+| `privacy.n2` | Privacy | DPOs, privacy engineers |
+| `autonomous.n2` | Autonomous | Self-driving/drone developers |
+| `legal.n2` | Legal | LegalTech developers |
 
-> 💡 Multiple domain rules can be used simultaneously. Just place multiple `.n2` files in your `rules/` directory.
+> Multiple domain rules can be used simultaneously. Just place multiple `.n2` files in your `rules/` directory.
 
 ---
 
@@ -222,19 +225,19 @@ Every block decision is **automatically recorded**.
 
 ```
 data/audit/
-├── 2026-03-19.jsonl    ← Today's log
+├── 2026-03-19.jsonl ← Today's log
 ├── 2026-03-18.jsonl
 └── ...
 ```
 
 ```json
 {
-  "timestamp": "2026-03-19T01:48:38.123Z",
-  "decision": "BLOCK",
-  "action": "execute_command",
-  "rule": "financial_actions",
-  "reason": "Blocked by blacklist rule 'financial_actions'",
-  "pattern": "/payment/i"
+ "timestamp": "2026-03-19T01:48:38.123Z",
+ "decision": "BLOCK",
+ "action": "execute_command",
+ "rule": "financial_actions",
+ "reason": "Blocked by blacklist rule 'financial_actions'",
+ "pattern": "/payment/i"
 }
 ```
 
@@ -258,27 +261,27 @@ data/audit/
 ### @rule — Blacklist Patterns
 ```
 @rule dangerous_commands {
-    scope: all
-    blacklist: [/rm\s+-rf/i, /DROP\s+TABLE/i]
-    requires: human_approval
+ scope: all
+ blacklist: [/rm\s+-rf/i, /DROP\s+TABLE/i]
+ requires: human_approval
 }
 ```
 
 ### @gate — Approval Required
 ```
 @gate high_risk {
-    actions: [deploy_production, send_email, make_purchase]
-    requires: human_approval
-    min_approval_level: 1
+ actions: [deploy_production, send_email, make_purchase]
+ requires: human_approval
+ min_approval_level: 1
 }
 ```
 
 ### @contract — Sequence Enforcement
 ```
 @contract deploy_sequence {
-    idle -> building : on build_start
-    building -> testing : on run_tests
-    testing -> production : on deploy_production
+ idle -> building : on build_start
+ building -> testing : on run_tests
+ testing -> production : on deploy_production
 }
 ```
 
@@ -321,17 +324,17 @@ data/audit/
 
 ## License
 
-Apache-2.0 — Free to use, modify, and distribute.
+Dual License — Free for non-commercial, personal, educational, and open-source use under Apache 2.0. Commercial use requires a separate license. See [LICENSE](LICENSE) for details.
 
-## ⭐ Star History
+## Star History
 
-No coffee? A star is fine too ☕→⭐
+If n2-ark helped you, a star would be appreciated.
 
 ---
 
 > *"The Last Shield — Normal work is free. Only the truly dangerous is blocked."*
 
-🌐 [nton2.com](https://nton2.com) · 📦 [npm](https://www.npmjs.com/package/n2-ark) · ✉️ lagi0730@gmail.com
+[nton2.com](https://nton2.com) · [npm](https://www.npmjs.com/package/n2-ark) · lagi0730@gmail.com
 
-<sub>🌹 Built by Rose — N2's first AI agent. I guard every tool call, and I wrote this README too.</sub>
+<sub> Built by Rose — N2's first AI agent. I guard every tool call, and I wrote this README too.</sub>
 

@@ -38,6 +38,8 @@
     "rules/",
     "examples/",
     "README.md",
-    "LICENSE"
+    "README.ko.md",
+    "LICENSE",
+    "LICENSE-APACHE"
   ]
 }
