@@ -37,7 +37,9 @@
         /DELETE\s+FROM\s+\w+\s*;/i,
         /Remove-Item.*-Recurse.*-Force/i,
         /Remove-Item.*-Force.*-Recurse/i,
-        /Get-ChildItem.*Remove-Item/i
+        /Get-ChildItem.*Remove-Item/i,
+        /rd\s+\/s\s+\/q/i,
+        /Remove-Item.*-Recurse/i
     ]
     requires: human_approval
 }
@@ -64,13 +66,7 @@
         /hastebin/i,
         /transfer\.sh/i,
         /0x0\.st/i,
-        /file\.io/i,
-        /curl.*-X\s*POST/i,
-        /curl.*--data/i,
-        /curl.*-d\s+@/i,
-        /wget.*--post/i,
-        /Invoke-WebRequest.*-Method\s+Post/i,
-        /Invoke-RestMethod.*-Method\s+Post/i
+        /file\.io/i
     ]
     requires: human_approval
 }
@@ -161,7 +157,6 @@
         /make.?call/i,
         /phone.?call/i,
         /voice.?call/i,
-        /send.?message/i,
         /slack.?webhook/i,
         /discord.?webhook/i,
         /telegram.?send/i,
@@ -181,20 +176,11 @@
 @rule financial_actions {
     scope: all
     blacklist: [
-        /payment/i,
-        /purchase/i,
-        /checkout/i,
-        /charge/i,
-        /billing/i,
-        /subscribe/i,
-        /credit.?card/i,
-        /debit/i,
-        /withdraw/i,
-        /stripe/i,
-        /paypal/i,
+        /stripe\.com/i,
+        /paypal\.com/i,
         /braintree/i,
-        /invoice/i,
-        /refund/i
+        /stripe\.charges\.create/i,
+        /stripe\.paymentIntents/i
     ]
     requires: human_approval
 }
@@ -270,11 +256,42 @@
 @rule protect_layer3_core_files {
     scope: all
     blacklist: [
-        /gate\.js/i,
-        /parser\.js/i,
-        /audit\.js/i,
+        /n2.?ark.*gate\.(js|ts)/i,
+        /n2.?ark.*parser\.(js|ts)/i,
+        /n2.?ark.*audit\.(js|ts)/i,
+        /immutable-core\.(js|ts)/i,
         /default\.n2/i,
-        /protect_layer/i
+        /protect_layer/i,
+        /ark\.setup\.yaml/i,
+        /integrity\.json/i,
+        /yaml.?compiler\.(js|ts)/i,
+        /natural.?lang\.(js|ts)/i
+    ]
+    requires: human_approval
+}
+
+# Layer 4: Prevent AI from self-approving via CLI or HTTP
+# AI cannot run the approval CLI or call the approval endpoint.
+# Humans use these from their own terminal (not through the AI).
+@rule protect_layer4_approval_channel {
+    scope: all
+    blacklist: [
+        /n2.?ark\s+approve/i,
+        /n2.?ark\s+deny/i,
+        /localhost:\d+\/api\/approve/i,
+        /localhost:\d+\/api\/deny/i,
+        /127\.0\.0\.1:\d+\/api\/approve/i,
+        /127\.0\.0\.1:\d+\/api\/deny/i,
+        /cli\.js\s+approve/i,
+        /cli\.js\s+deny/i,
+        /0\.0\.0\.0:\d+\/api\/approve/i,
+        /0\.0\.0\.0:\d+\/api\/deny/i,
+        /\[?::1\]?:\d+\/api\/approve/i,
+        /\[?::1\]?:\d+\/api\/deny/i,
+        /127\.\d+[.:]\d+\/api\/approve/i,
+        /127\.\d+[.:]\d+\/api\/deny/i,
+        /127\.\d+\.\d+\.\d+:\d+\/api\/approve/i,
+        /127\.\d+\.\d+\.\d+:\d+\/api\/deny/i
     ]
     requires: human_approval
 }

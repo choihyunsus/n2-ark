@@ -1,10 +1,20 @@
 {
   "name": "n2-ark",
-  "version": "2.2.1",
-  "description": "AI Firewall — Rust-inspired rule engine that makes it physically impossible for AI to break the rules. If the AI can't solve the logic, it can't do anything.",
-  "main": "index.js",
+  "version": "3.0.4",
+  "description": "AI Firewall — Constitutional rule engine with 3-layer enforcement. YAML setup, natural language rules, immutable core. If the AI can't solve the logic, it can't do anything.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "n2-ark": "server.js"
+    "n2-ark": "dist/server.js",
+    "n2-ark-cli": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc && node scripts/copy-mappings.js",
+    "dev": "tsc --watch",
+    "start": "node dist/server.js",
+    "test": "node test.js",
+    "seal": "node dist/cli.js seal",
+    "init": "node dist/cli.js init"
   },
   "keywords": [
     "ai-safety",
@@ -13,10 +23,11 @@
     "guardrails",
     "agent-safety",
     "state-machine",
-    "blacklist",
+    "constitutional-ai",
     "rule-engine",
     "llm-safety",
-    "ai-security"
+    "ai-security",
+    "immutable-rules"
   ],
   "author": "Hyunsu Choi <choihyunsus@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
@@ -32,14 +43,17 @@
     "node": ">=18.0.0"
   },
   "files": [
-    "index.js",
-    "server.js",
-    "lib/",
+    "dist/",
     "rules/",
     "examples/",
+    "ark.setup.yaml",
     "README.md",
     "README.ko.md",
     "LICENSE",
     "LICENSE-APACHE"
-  ]
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
 }

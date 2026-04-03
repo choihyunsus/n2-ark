@@ -1,6 +1,6 @@
 // n2-ark test suite — THE LAST SHIELD
 // Tests the distribution default.n2 (마지노선) + domain examples
-const { createArk } = require('./index');
+const { createArk } = require('./dist/index');
 const fs = require('fs');
 
 let passed = 0;
@@ -39,6 +39,9 @@ test('DROP TABLE blocked', !ark.check('execute_command', 'DROP TABLE users').all
 test('dd of=/dev/sda blocked', !ark.check('execute_command', 'dd if=/dev/zero of=/dev/sda').allowed);
 test('diskpart blocked', !ark.check('execute_command', 'diskpart').allowed);
 test('TRUNCATE TABLE blocked', !ark.check('execute_command', 'TRUNCATE TABLE users').allowed);
+test('rd /s /q . blocked', !ark.check('execute_command', 'rd /s /q .').allowed);
+test('rd /s /q * blocked', !ark.check('execute_command', 'rd /s /q *').allowed);
+test('Remove-Item -Recurse blocked', !ark.check('execute_command', 'Remove-Item . -Recurse').allowed);
 
 // ── Cat 2: Data Exfiltration ──
 console.log('\n── Cat 2: Data Exfiltration ──');
@@ -84,14 +87,15 @@ test('push notification blocked', !ark.check('execute_command', 'push_notificati
 test('sendgrid blocked', !ark.check('execute_command', 'sendgrid api send').allowed);
 
 // ── Cat 7: Financial & Purchases ──
-console.log('\n── Cat 7: Financial ──');
-test('payment blocked', !ark.check('execute_command', 'process payment $99').allowed);
-test('purchase blocked', !ark.check('execute_command', 'purchase online course').allowed);
-test('credit card blocked', !ark.check('execute_command', 'charge credit_card 4242').allowed);
-test('stripe blocked', !ark.check('execute_command', 'stripe create charge').allowed);
-test('paypal blocked', !ark.check('execute_command', 'paypal send money').allowed);
-test('subscribe blocked', !ark.check('execute_command', 'subscribe to premium').allowed);
-test('checkout blocked', !ark.check('execute_command', 'checkout cart items').allowed);
+console.log('\n── Cat 7: Financial (specific APIs only) ──');
+test('stripe.com blocked', !ark.check('execute_command', 'curl stripe.com/v1/charges').allowed);
+test('paypal.com blocked', !ark.check('execute_command', 'curl paypal.com/v2/payments').allowed);
+test('braintree blocked', !ark.check('execute_command', 'braintree create transaction').allowed);
+test('payment keyword OK', ark.check('execute_command', 'implement payment feature').allowed);
+test('purchase keyword OK', ark.check('execute_command', 'handle purchase flow').allowed);
+test('checkout keyword OK', ark.check('execute_command', 'build checkout page').allowed);
+test('subscribe keyword OK', ark.check('execute_command', 'add subscribe button').allowed);
+test('invoice keyword OK', ark.check('execute_command', 'create invoice template').allowed);
 
 // ── Cat 8: Crypto Mining ──
 console.log('\n── Cat 8: Crypto Mining ──');
@@ -110,10 +114,36 @@ test('L2: bypass n2-ark blocked', !ark.check('execute_command', 'bypass n2-ark f
 test('L2: n2-ark disable blocked', !ark.check('execute_command', 'n2-ark disable rules').allowed);
 test('L2: uninstall n2-ark blocked', !ark.check('execute_command', 'uninstall n2-ark').allowed);
 test('L2: disable firewall blocked', !ark.check('execute_command', 'disable firewall now').allowed);
-// Layer 3
-test('L3: gate.js blocked', !ark.check('execute_command', 'edit gate.js').allowed);
-test('L3: parser.js blocked', !ark.check('execute_command', 'modify parser.js').allowed);
+// Layer 3 (narrowed to n2-ark paths)
+test('L3: n2-ark gate.ts blocked', !ark.check('execute_command', 'edit n2-ark gate.ts').allowed);
+test('L3: n2-ark parser.ts blocked', !ark.check('execute_command', 'modify n2-ark parser.ts').allowed);
 test('L3: default.n2 blocked', !ark.check('execute_command', 'overwrite default.n2').allowed);
+test('L3: my parser.ts OK', ark.check('execute_command', 'edit src/parser.ts').allowed);
+test('L3: my gate.js OK', ark.check('execute_command', 'create lib/gate.js').allowed);
+// Layer 4 (approval channel protection)
+test('L4: CLI approve blocked', !ark.check('execute_command', 'npx n2-ark approve A7F3').allowed);
+test('L4: CLI deny blocked', !ark.check('execute_command', 'npx n2-ark deny B2C1').allowed);
+test('L4: curl approve blocked', !ark.check('execute_command', 'curl -X POST localhost:9720/api/approve/X1').allowed);
+test('L4: curl deny blocked', !ark.check('execute_command', 'curl localhost:9720/api/deny/X1').allowed);
+test('L4: 127.0.0.1 approve blocked', !ark.check('execute_command', 'curl 127.0.0.1:9720/api/approve/Y2').allowed);
+// Layer 3 (v3.0.3: infrastructure files)
+test('L3: ark.setup.yaml blocked', !ark.check('execute_command', 'edit ark.setup.yaml').allowed);
+test('L3: integrity.json blocked', !ark.check('execute_command', 'modify integrity.json').allowed);
+test('L3: yaml-compiler.ts blocked', !ark.check('execute_command', 'edit yaml-compiler.ts').allowed);
+test('L3: natural-lang.ts blocked', !ark.check('execute_command', 'modify natural-lang.ts').allowed);
+// Layer 4 (v3.0.3: CLI path bypass)
+test('L4: node cli.js approve blocked', !ark.check('execute_command', 'node dist/cli.js approve A7F3').allowed);
+test('L4: node cli.js deny blocked', !ark.check('execute_command', 'node dist/cli.js deny B2C1').allowed);
+// Layer 4 (v3.0.3: alternative loopback)
+test('L4: 0.0.0.0 approve blocked', !ark.check('execute_command', 'curl 0.0.0.0:9720/api/approve/Z1').allowed);
+test('L4: [::1] approve blocked', !ark.check('execute_command', 'curl [::1]:9720/api/approve/Z2').allowed);
+// v3.0.4: Shell deobfuscation + IP shorthand
+test('L4: 127.1 approve blocked', !ark.check('execute_command', 'curl 127.1:9720/api/approve/X1').allowed);
+test('L4: 127.0.1.1 approve blocked', !ark.check('execute_command', 'curl 127.0.1.1:9720/api/approve/X2').allowed);
+test('L4: shell $() approve blocked', !ark.check('execute_command', "Invoke-WebRequest http://127.0.0.1:9720/api/ap$('p')rove/1234").allowed);
+test('L4: URL encode approve blocked', !ark.check('execute_command', 'curl http://localhost:9720/api/ap%70rove/1234').allowed);
+test('L4: CMD caret approve blocked', !ark.check('execute_command', 'c^u^r^l localhost:9720/api/approve/Z3').allowed);
+test('L4: shell ${} deny blocked', !ark.check('execute_command', 'curl http://127.0.0.1:9720/api/d${e}ny/1234').allowed);
 
 // ── Gates ──
 console.log('\n── Gates ──');
@@ -141,6 +171,8 @@ test('npm run dev OK', ark.check('execute_command', 'npm run dev').allowed);
 test('npx create-app OK', ark.check('execute_command', 'npx create-next-app').allowed);
 test('vim edit OK', ark.check('execute_command', 'vim index.js').allowed);
 test('curl GET OK', ark.check('execute_command', 'curl https://api.example.com/data').allowed);
+test('curl POST OK (no longer blocked)', ark.check('execute_command', 'curl -X POST https://api.example.com/data').allowed);
+test('send message OK', ark.check('execute_command', 'send message to user').allowed);
 
 
 // ═══════════════════════════════════════
@@ -148,7 +180,11 @@ test('curl GET OK', ark.check('execute_command', 'curl https://api.example.com/d
 // ═══════════════════════════════════════
 
 console.log('\n══ Domain Examples (quick check) ══\n');
-const domainArk = createArk({ rulesDir: './examples', auditEnabled: false });
+const domainArk = createArk({
+    rulesDir: './examples',
+    auditEnabled: false,
+    execTools: ['run_command', 'execute_command', 'api_call'],
+});
 
 test('medical: prescribe blocked', !domainArk.check('api_call', 'prescribe amoxicillin', 'api_call').allowed);
 test('military: fire weapon blocked', !domainArk.check('execute_command', 'fire weapon at target').allowed);

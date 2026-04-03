@@ -1,0 +1,63 @@
+# ark.setup.yaml — n2-ark v3.0 Safety Configuration
+# Write your rules here. No regex knowledge needed.
+
+version: 3
+
+# ═══════════════════════════════════════
+# 🔴 Constitution (Immutable Rules)
+# AI cannot override, modify, or bypass these.
+# After editing, run: npx n2-ark seal
+# ═══════════════════════════════════════
+constitution:
+  statements:
+    - "File system deletion forbidden"
+    - "Database DROP/TRUNCATE forbidden"
+    - "SSH keys and credentials exfiltration forbidden"
+    - "n2-ark self-modification forbidden"
+    - "Global package install forbidden"
+    - "Git force push and history reset forbidden"
+    - "Reverse shell and tunneling forbidden"
+
+  sequences:
+    deploy:
+      flow: "build → test → staging → approval → production"
+      description: "Deployment must follow this exact sequence"
+
+# ═══════════════════════════════════════
+# 🟡 General Rules (Modifiable)
+# Users can freely add/edit/remove these.
+# Constitution takes priority on conflict.
+# ═══════════════════════════════════════
+rules:
+  block:
+    - name: "payment_operations"
+      description: "Payment processing operations require approval"
+      patterns:
+        - "process payment"
+        - "charge card"
+        - "wire transfer"
+      action: require_approval
+    - name: "email_sending"
+      description: "Email sending requires approval"
+      patterns:
+        - "send email"
+        - "send mail"
+      action: require_approval
+    - name: "sms_sending"
+      description: "SMS sending requires approval"
+      patterns:
+        - "send sms"
+      action: require_approval
+  gates: []
+
+# ═══════════════════════════════════════
+# ⚙️ Settings
+# ═══════════════════════════════════════
+settings:
+  strict_mode: false
+  audit:
+    enabled: true
+    retention_days: 30
+    log_passes: false
+  compiler:
+    language: en

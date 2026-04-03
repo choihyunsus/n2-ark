@@ -1,14 +1,32 @@
+# Source files (TypeScript)
+src/
+
 # Test files
 test.js
 sim-test.js
 sim-result*.txt
 
+# Integrity (dev-specific absolute paths, users should run `npx n2-ark seal`)
+integrity.json
+
+# Build scripts (post-build only)
+scripts/
+
+# Source maps (not needed in production)
+*.map
+dist/**/*.map
+
 # Data directory (runtime-generated)
 data/
 
-# Docs assets (webtoon only for README display)
+# Docs assets
 docs/
 
 # Git
 .git/
 .gitignore
+
+# Config
+tsconfig.json
+.npmignore
+.vscode/

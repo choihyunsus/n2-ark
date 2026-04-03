@@ -1,0 +1,9 @@
+{
+  "version": 3,
+  "created": "2026-04-03T01:21:46.779Z",
+  "algorithm": "sha256",
+  "hashes": {
+    "ark.setup.yaml": "1c7a08905ff61afc930b60bfcd85648495fef47c5d793ae334014a50d3dc4f75",
+    "rules\\default.n2": "fac02ae6219f37f334aee20aa7d0e186878fec3347d1aeac133697f36f50274c"
+  }
+}
