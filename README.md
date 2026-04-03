@@ -18,14 +18,7 @@ KR [한국어](README.ko.md)
 
 ---
 
-## From the Developer
 
-> **n2-ark is the last bastion.**
->
-> I built this thinking of a final shield — one that blocks the dangers of AI so humans and AI can coexist safely.
-> I hope this opens the door to a world where AI and humans can live together in safety.
-
----
 
 ## The Problem
 
