@@ -20,17 +20,6 @@ KR [한국어](README.ko.md)
 
 
 
-## The Problem
-
-AI agents are getting more powerful — and more dangerous:
-
-- **Claude** bought an online course with a user's credit card "because it seemed helpful"
-- **OpenClaw** made autonomous purchases and card payments without user consent
-- **Manus Bot** made phone calls and sent SMS messages autonomously
-- Rogue agents have been reported deleting entire systems with `rm -rf /`
-
-Prompt-level safety only works **if the AI cooperates**. A rogue AI doesn't cooperate.
-
 ## The Solution
 
 n2-ark is a **code-level AI firewall** with a **direct human approval channel**. It doesn't ask the AI to behave — it makes misbehavior physically impossible.
@@ -173,9 +162,6 @@ Layer 1: .n2 file paths detected          --> BLOCKED
 Layer 2: manipulation verbs + n2-ark      --> BLOCKED
 Layer 3: core + infra files (gate, parser, setup, integrity) --> BLOCKED
 Layer 4: approval CLI/HTTP/IPv6 self-approval  --> BLOCKED
-
-Four independent layers.
-Bypass one? The next one catches you.
 ```
 
 ---
@@ -416,7 +402,5 @@ data/audit/
 Dual License — Free for non-commercial, personal, educational, and open-source use under Apache 2.0. Commercial use requires a separate license. See [LICENSE](LICENSE) for details.
 
 ---
-
-> *"The Last Shield — Normal work is free. Only the truly dangerous is blocked."*
 
 [nton2.com](https://nton2.com) | [npm](https://www.npmjs.com/package/n2-ark) | lagi0730@gmail.com
