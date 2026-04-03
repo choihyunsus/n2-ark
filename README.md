@@ -64,6 +64,18 @@ if (!result.allowed) {
 
 ---
 
+## What's New in v3.x (Migration Guide)
+
+Version 3 is a major security hardening release focused on eliminating AI self-approval vectors and obfuscation bypasses:
+
+- **MCP `ark_approve` Removed**: The AI can no longer approve actions via MCP. Approvals are strictly out-of-band via the HTTP Dashboard (`localhost:9720`) or CLI (`npx n2-ark approve`).
+- **Enhanced Normalization**: The `ark.check` evaluator now automatically neutralizes shell subexpressions (`$()`, `${}`), command caret stripping (`^`), and URL encoding before evaluating regex rules.
+- **Strict CORS & Loopbacks**: The Approval Server now strictly enforces same-origin policies to prevent CSRF attacks, and blocks all variant loopback addresses (`127.1`, `[::1]`, `0.0.0.0`) from being accessed by the AI.
+
+**Migration**: No API changes to `createArk()` or `ark.check()`. If you previously allowed agents to use `ark_approve`, you must now manually approve via browser or terminal.
+
+---
+
 ## Integration & Enforcement
 
 n2-ark provides the **rules engine**. How you integrate it determines whether it's a real firewall or just a suggestion.
