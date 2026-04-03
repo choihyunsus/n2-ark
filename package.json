@@ -1,6 +1,6 @@
 {
   "name": "n2-ark",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "AI Firewall — Constitutional rule engine with 3-layer enforcement. YAML setup, natural language rules, immutable core. If the AI can't solve the logic, it can't do anything.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
